@@ -28,10 +28,11 @@ class App extends Component {
     this.getAllBooks();
   }
   
-  onChangeShelf(id, shelf) {
+  onChangeShelf(updatedBook, shelf) {
     // Do a optimistic state update
     const { books } = this.state;
-    const bookToUpdate = books.filter(book => book.id === id)[0];
+    const { id } = updatedBook;
+    const bookToUpdate = books.filter(book => book.id === id)[0] || updatedBook;
     const bookWithUpdatedShelf = Object.assign({}, bookToUpdate, { shelf });
     const updatedBooks = [...books.filter(book => book.id !== id), bookWithUpdatedShelf];
     this.setState({
@@ -52,7 +53,7 @@ class App extends Component {
     return (
       <div className="app">
         <Route path="/" exact render={() => <HomePage books={books} onChangeShelf={this.onChangeShelf} />} />
-        <Route path="/search" component={SearchPage} />
+        <Route path="/search" render={() => <SearchPage addedBooks={books} onChangeShelf={this.onChangeShelf} />} />
       </div>
     );
   }

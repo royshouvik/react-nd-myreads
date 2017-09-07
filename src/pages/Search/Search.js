@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { compose, withState, withHandlers } from 'recompose';
-import { debounce } from 'lodash';
+import { debounce, intersectionBy, unionBy } from 'lodash';
 import Book from '../../components/Book';
 import { search } from '../../BooksAPI';
 
 const SEARCH_DEBOUNCE_DELAY = 500; // 800 milliseconds
 
-const Search = ({ searchText, onChangeSearchInput, searchResults, searchError }) => {
+const Search = ({ searchText, onChangeSearchInput, searchResults, searchError, onChangeShelf }) => {
     return (
         <div className="search-books">
             <div className="search-books-bar">
@@ -24,6 +24,7 @@ const Search = ({ searchText, onChangeSearchInput, searchResults, searchError })
                         key={index}>
                             <Book
                                 book={book}
+                                onChangeShelf={onChangeShelf}
                                 coverURL={book.imageLinks.thumbnail}
                             />
                     </li>
@@ -39,7 +40,11 @@ const Search = ({ searchText, onChangeSearchInput, searchResults, searchError })
 };
 
 Search.propTypes = {
-
+    searchText: PropTypes.string.isRequired,
+    onChangeSearchInput: PropTypes.func.isRequired,
+    searchResults: PropTypes.arrayOf(PropTypes.object),
+    searchError: PropTypes.bool.isRequired,
+    onChangeShelf: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -47,7 +52,7 @@ export default compose(
     withState('searchResults', 'setSearchResults', []),
     withState('searchError', 'setSearchError', false),
     withHandlers({
-        onChangeSearchInput: ({ setSearchText, setSearchResults, setSearchError }) => (event) => {
+        onChangeSearchInput: ({ setSearchText, setSearchResults, setSearchError, addedBooks }) => (event) => {
             const updatedValue = event.target.value;
             setSearchText(updatedValue, debounce(() => {
                 if (updatedValue.length > 2) {
@@ -57,7 +62,7 @@ export default compose(
                                 setSearchResults([]);
                                 setSearchError(true);
                             } else {
-                                setSearchResults(books);
+                                setSearchResults(unionBy(intersectionBy(addedBooks, books, 'id'), books, 'id'));
                                 setSearchError(false);
                             }
                         });

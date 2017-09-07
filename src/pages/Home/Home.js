@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { compose, withState, withHandlers, lifecycle, withProps } from 'recompose';
-import { getAll } from '../../BooksAPI';
+import { compose, withProps } from 'recompose';
 import Bookshelf from '../../components/Bookshelf';
 import { Shelves } from '../../constants';
 
@@ -15,7 +14,7 @@ const Home = ({ books, currentlyReadingBooks, wantToReadBooks, readBooks, onChan
             {!books && <h2 className="error">Loading...</h2>}
             {books && (
                 <div className="list-books-content">
-                    <div>
+                    <div className="bookshelf-container">
                         {
                             currentlyReadingBooks && <Bookshelf onChangeShelf={onChangeShelf} name="Currently Reading" books={currentlyReadingBooks} />
                         }
@@ -38,7 +37,11 @@ const Home = ({ books, currentlyReadingBooks, wantToReadBooks, readBooks, onChan
 };
 
 Home.propTypes = {
-
+    books: PropTypes.arrayOf(PropTypes.object),
+    currentlyReadingBooks: PropTypes.arrayOf(PropTypes.object),
+    wantToReadBooks: PropTypes.arrayOf(PropTypes.object),
+    readBooks: PropTypes.arrayOf(PropTypes.object),
+    onChangeShelf: PropTypes.func.isRequired,
 };
 
 export default compose(

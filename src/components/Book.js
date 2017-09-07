@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { Shelves } from '../constants';
 
 const Book = ({ book, coverURL, onChangeShelf }) => {
-    const { id, shelf, title, subtitle, authors } = book;
+    const { shelf, title, subtitle, authors } = book;
     return (
         <div className="book">
             <div className="book-top">
-                <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: `url(${coverURL})` }}></div>
+                <div className="book-cover" style={{ width: 128, height: 160, backgroundImage: `url(${coverURL})` }}></div>
                 <div className="book-shelf-changer">
-                    <select value={shelf} onChange={(event) => onChangeShelf(id, event.target.value)}>
-                        <option value="none" disabled>Move to...</option>
+                    <select value={shelf || 'none'} onChange={(event) => onChangeShelf(book, event.target.value)}>
+                        <option disabled>Move to...</option>
                         <option value="currentlyReading">Currently Reading</option>
                         <option value="wantToRead">Want to Read</option>
                         <option value="read">Read</option>
@@ -32,9 +32,10 @@ Book.propTypes = {
         title: PropTypes.string.isRequired,
         subtitle: PropTypes.string,
         authors: PropTypes.arrayOf(PropTypes.string),
-        shelf: PropTypes.oneOf([Shelves.CURRENTLY_READING, Shelves.WANT_TO_READ, Shelves.READ])
+        shelf: PropTypes.oneOf([Shelves.CURRENTLY_READING, Shelves.WANT_TO_READ, Shelves.READ, Shelves.NONE])
     }),
     coverURL: PropTypes.string.isRequired,
+    onChangeShelf: PropTypes.func.isRequired,
 };
 
 export default Book;
