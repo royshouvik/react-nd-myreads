@@ -55,7 +55,7 @@ export default compose(
         onChangeSearchInput: ({ setSearchText, setSearchResults, setSearchError, addedBooks }) => (event) => {
             const updatedValue = event.target.value;
             setSearchText(updatedValue, debounce(() => {
-                if (updatedValue.length > 2) {
+                if (updatedValue.length > 1) {
                     search(updatedValue, 50)
                         .then(books => {
                             if (books.error) {
